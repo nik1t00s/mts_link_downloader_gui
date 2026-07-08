@@ -205,6 +205,7 @@ class MtsLinkDownloaderApp(tk.Tk):
             return
         if item.frame is not None:
             item.frame.destroy()
+        item.frame = None
         self._queue = [entry for entry in self._queue if entry.item_id != item.item_id]
         self._show_empty_if_needed()
 
@@ -220,12 +221,15 @@ class MtsLinkDownloaderApp(tk.Tk):
             if item.status == "done":
                 if item.frame is not None:
                     item.frame.destroy()
+                item.frame = None
                 continue
             remaining.append(item)
         self._queue = remaining
         self._show_empty_if_needed()
 
     def _update_item_ui(self, item: _QueueItem, percent: float | None = None) -> None:
+        if item.frame is None:
+            return
         if item.status_label is not None:
             text = _STATUS_TEXT.get(item.status, item.status)
             if item.status == "error" and item.error:
