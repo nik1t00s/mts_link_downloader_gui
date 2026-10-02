@@ -55,8 +55,8 @@ def validate_record_url(url: str) -> None:
     if parsed.scheme not in {"http", "https"} or not parsed.netloc:
         raise DownloaderError("Ссылка выглядит некорректно. Проверьте, что она начинается с http:// или https://.")
 
-    host = parsed.netloc.lower()
-    if not (host.endswith("mts-link.ru") or host.endswith("webinar.ru")):
+    host = (parsed.hostname or "").lower()
+    if not any(host == domain or host.endswith("." + domain) for domain in ("mts-link.ru", "webinar.ru")):
         raise DownloaderError("Это не похоже на ссылку MTS Link / МТС Линк.")
 
 
@@ -68,10 +68,9 @@ def validate_output_dir(output_dir: str | Path) -> Path:
     if not path.exists() or not path.is_dir():
         raise DownloaderError("Выбранная папка не существует.")
 
-    test_file = path / ".mts_link_downloader_write_test"
     try:
-        test_file.write_text("ok", encoding="utf-8")
-        test_file.unlink(missing_ok=True)
+        with tempfile.TemporaryFile(dir=path) as test_file:
+            test_file.write(b"ok")
     except OSError as exc:
         raise DownloaderError("Нет прав на запись в выбранную папку.") from exc
 

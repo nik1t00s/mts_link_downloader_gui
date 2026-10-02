@@ -3,6 +3,7 @@ from __future__ import annotations
 import queue
 import threading
 import tkinter as tk
+from .desktop_theme import apply_theme
 from dataclasses import dataclass, field
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
@@ -43,8 +44,8 @@ class MtsLinkDownloaderApp(tk.Tk):
     def __init__(self) -> None:
         super().__init__()
         self.title("MTS Link Downloader")
-        self.geometry("820x640")
-        self.minsize(720, 520)
+        self.geometry("960x740")
+        self.minsize(800, 600)
 
         self.events: queue.Queue[tuple[str, object]] = queue.Queue()
         self.selected_dir = tk.StringVar()
@@ -57,6 +58,7 @@ class MtsLinkDownloaderApp(tk.Tk):
         self.worker: threading.Thread | None = None
 
         self._build_ui()
+        apply_theme(self)
         self._poll_events()
         self._log("Приложение готово.")
         if not ffmpeg_available():
@@ -67,7 +69,7 @@ class MtsLinkDownloaderApp(tk.Tk):
 
         padding = {"padx": 16, "pady": 8}
 
-        ttk.Label(self, text="Ссылка на запись").grid(row=0, column=0, sticky="w", **padding)
+        ttk.Label(self, text="MTS Link · ваши записи под рукой", font=("Segoe UI", 20, "bold")).grid(row=0, column=0, sticky="w", **padding)
         url_frame = ttk.Frame(self)
         url_frame.grid(row=1, column=0, sticky="ew", padx=16)
         url_frame.columnconfigure(0, weight=1)

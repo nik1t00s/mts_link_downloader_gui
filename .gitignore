@@ -17,3 +17,8 @@ downloads/
 .vscode/
 Thumbs.db
 .DS_Store
+
+# Generated caches
+*.pyc.*
+.pytest_cache/
+.ruff_cache/
